@@ -6,4 +6,4 @@ This is a very simple program I made while learning to program the m5stack cardp
 
 Use the arrow keys or the keys in the columns under number keys 3-6 to move the gap in the puzzle around. Press 0 to scramble.
 
-![screenshot](https://imgur.com/a/rhfBnXI)
+https://imgur.com/a/rhfBnXI
