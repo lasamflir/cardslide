@@ -33,19 +33,19 @@ int zero[2] = {3, 3}; // position of the hole in the puzzle
 
 int moveCount = 0; // number of moves made
 
+void positionCursor(int x, int y)
+{
+    M5.Lcd.setCursor(x * 40, y * 40);
+}
+
 void redrawPuzzle()
 {
-    M5.Lcd.fillScreen(TFT_BLACK);
     M5.Lcd.setTextSize(2);
 
     // draw the puzzle without drawing 0, and with plenty of space between numbers for readability, in black on white for contrast with a space padding single digits
     if (won)
     {
         M5.Lcd.setTextColor(TFT_BLACK, TFT_GREEN);
-    }
-    else
-    {
-        M5.Lcd.setTextColor(TFT_BLACK, TFT_WHITE);
     }
 
     for (int y = 0; y < 4; y++)
@@ -56,10 +56,29 @@ void redrawPuzzle()
             {
                 continue;
             }
-            M5.Lcd.setCursor(x * 40, y * 40);
+            int textColour = TFT_BLACK;
+            if (won)
+            {
+                textColour = TFT_GOLD; //gold text when won
+            }
+            // create white-red checkerboard pattern by colouring 1, 3, 6, 8, 9, 11, 14 white and the rest red
+            if (((puzzle[y][x] - 1) / 4 + (puzzle[y][x] - 1) % 4) % 2 == 0)
+            {
+                M5.Lcd.setTextColor(textColour, TFT_WHITE);
+            }
+            else
+            {
+                M5.Lcd.setTextColor(textColour, TFT_RED);
+            }
+            positionCursor(x, y);
             M5.Lcd.printf("%2d", puzzle[y][x]);
         }
     }
+
+    // move cursor to zero and print a space in white on black to represent the hole
+    positionCursor(zero[0], zero[1]);
+    M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+    M5.Lcd.printf("  ");
 
     // draw the move count in the corner of the screen
     M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
@@ -142,8 +161,8 @@ void swapToTarget(int x, int y)
 
 void scramble()
 {
-    // scramble the puzzle by making 100 random moves using swapToTarget
-    for (int i = 0; i < 100; i++)
+    // scramble the puzzle by making 400 random moves using swapToTarget
+    for (int i = 0; i < 400; i++)
     {
         int x = random(4);
         int y = random(4);
@@ -152,6 +171,8 @@ void scramble()
     }
     won = false;
     moveCount = 0;
+    M5.Lcd.fillScreen(TFT_BLACK);
+    redrawPuzzle();
 }
 
 bool getKeyboardInput()
